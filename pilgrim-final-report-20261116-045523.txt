@@ -1,0 +1,116 @@
+==========================================
+ PILGRIM AUTOMATIC REPAIR AND FINAL CHECK
+==========================================
+Date: Mon Nov 16 04:55:23 WAT 2026
+Backend: /data/data/com.termux/files/home/pilgrim-live-bridge
+Backup: /storage/emulated/0/Book/Trad/backups/pilgrim-final-20261116-045523.tar.gz
+
+===== 1. BACKUP BEFORE REPAIR =====
+BACKUP CREATED:
+-rw-rw----. 1 u0_a265 media_rw 37K Nov 16 04:55 /storage/emulated/0/Book/Trad/backups/pilgrim-final-20261116-045523.tar.gz
+
+===== 2. ENVIRONMENT CHECK =====
+v24.17.0
+11.17.0
+Python 3.13.13
+Filesystem       Size Used Avail Use% Mounted on
+/dev/block/dm-57 223G 220G  2.2G  99% /data/misc/profiles/ref/com.termux
+
+===== 3. REQUIRED FILE CHECK =====
+FOUND: package.json
+FOUND: server.js
+FOUND: .env
+
+===== 4. DEPENDENCY CHECK =====
+pilgrim-live-trading@2.0.0 /data/data/com.termux/files/home/pilgrim-live-bridge
+├── cors@2.8.6
+├── dotenv@18.0.10
+├── express@5.3.0
+├── helmet@8.3.0
+├── pg@8.23.1
+├── pino@10.4.0
+└── zod@4.6.7
+
+
+===== 5. JAVASCRIPT SYNTAX CHECK =====
+server.js check exit code: 0
+Checking public/status.js
+/data/data/com.termux/files/home/pilgrim-live-bridge/public/status.js:23
+</script>
+^
+
+SyntaxError: Unexpected token '<'
+    at wrapSafe (node:internal/modules/cjs/loader:1787:18)
+    at checkSyntax (node:internal/main/check_syntax:76:3)
+
+Node.js v24.17.0
+Exit code: 1
+
+===== 6. ONLINE SECURITY AUDIT =====
+found 0 vulnerabilities
+npm audit exit code: 0
+
+===== 7. CHECK LIVE SAFETY SWITCHES =====
+config/broker-identifiers.env:8:LIVE_MODE=false
+config/broker-identifiers.env:9:ALLOW_ORDER_EXECUTION=false
+config/broker-identifiers.env:10:ALLOW_WITHDRAWALS=false
+
+The repair robot will NOT enable trading or withdrawals automatically.
+
+===== 8. WEBSITE FILE CHECK =====
+FOUND: public/index.html
+FOUND: public/status.js
+FOUND: public/terminals.html
+
+===== 9. BACKEND API SMOKE TEST =====
+{"application":"PILGRIM LIVE TRADING","backend":"online","tradingData":"unavailable_until_broker_verification","simulatedData":false,"orderExecution":false,"withdrawals":false,"time":"2026-11-16T03:55:40.420Z"}
+HEALTH ENDPOINT: RESPONDING
+
+BROKER STATUS:
+{"brokers":[{"name":"HFM","connected":false,"liveVerified":false,"message":"Authorised broker connection not configured"},{"name":"PU_PRIME","connected":false,"liveVerified":false,"message":"Authorised broker connection not configured"}]}
+
+HFM ACCOUNT TEST:
+{"broker":"HFM","connected":false,"accountData":null,"balance":null,"equity":null,"freeMargin":null,"positions":null,"message":"No verified live broker data. No balance is being displayed."}
+HTTP_STATUS:503
+
+PU PRIME ACCOUNT TEST:
+{"error":"Unknown broker"}
+HTTP_STATUS:404
+
+TERMINAL PAGE TEST:
+HTTP_STATUS:200
+
+===== 10. COPY WEBSITE FILES TO SHARED STORAGE =====
+Website files copied to:
+/storage/emulated/0/Book/Trad/pilgrim-live-site
+
+===== 11. CHECK ORIGINAL SIMULATION =====
+2:   PILGRIM TRADING — Simulation Engine
+3:   Paper-trading only. No real funds, no live MetaQuotes connection.
+34:const uid = () => Math.random().toString(36).slice(2,10);
+69:      p += (s.base - p)*0.01 + (Math.random()-0.5)*s.vol*1.6;
+71:      const h = Math.max(o,c) + Math.random()*s.vol*0.5;
+72:      const l = Math.min(o,c) - Math.random()*s.vol*0.5;
+75:    S.prices[s.sym] = { price:p, base:s.base, phase:Math.random()*6.28, candles, hi:p, lo:p, open:p };
+216:function marketTick() {
+223:    const noise = (Math.random() - 0.5) * s.vol * 1.25;
+245:  setInterval(() => { marketTick(); renderLive(); }, 1000);
+253:      robotCycle();
+418:function robotCycle() {
+452:  const sym = pool[Math.floor(Math.random() * pool.length)];
+NOTICE: Legacy simulation code remains in the original project.
+It has been preserved and must not be presented as live trading.
+
+===== 12. FINAL RESULT =====
+Backup: /storage/emulated/0/Book/Trad/backups/pilgrim-final-20261116-045523.tar.gz
+Website files: /storage/emulated/0/Book/Trad/pilgrim-live-site
+Report: /storage/emulated/0/Book/Trad/pilgrim-final-report-20261116-045523.txt
+Backend test log: /data/data/com.termux/files/home/pilgrim-live-bridge/logs/final-test-20261116-045523.log
+
+Trading execution: NOT ENABLED BY THIS SCRIPT
+Withdrawals: NOT ENABLED BY THIS SCRIPT
+Broker connection: MUST BE VERIFIED WITH REAL BROKER DATA
+Website deployment: NOT CONFIRMED BY A LOCAL TEST
+
+PILGRIM FINAL CHECK FINISHED
+==========================================
