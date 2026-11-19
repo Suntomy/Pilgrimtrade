@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pilgrim Real Services</title>
+<link rel="stylesheet" href="/style.css">
+<script src="/app.js" defer></script>
+<link rel="stylesheet" href="./pilgrim-private-brand.css">
+<meta name="author" content="Olawale Abdul-Ganiyu Adeshina">
+</head>
+<body>
+<main>
+  <h1>PILGRIM</h1>
+  <h2>Real Services Dashboard</h2>
+  <p id="health">Checking backend...</p>
+
+  <section>
+    <h3>Broker connections</h3>
+    <pre id="brokers">Checking...</pre>
+  </section>
+
+  <section>
+    <h3>Nigerian bank account verification</h3>
+    <label for="bank">Bank</label>
+    <select id="bank"><option value="">Loading supported banks...</option></select>
+
+    <label for="account">Account number</label>
+    <input id="account" inputmode="numeric" maxlength="10"
+           placeholder="10-digit account number">
+
+    <button id="verify">Verify account name</button>
+    <p id="verification">No account verified.</p>
+  </section>
+
+  <section>
+    <h3>Withdrawals</h3>
+    <p>Bank payout service is locked until a verified wallet ledger,
+       user authentication and provider approval are configured.</p>
+    <p id="payout">No money has been transferred.</p>
+  </section>
+
+  <footer>Pilgrim Real Services — no simulated balances or profits.</footer>
+</main>
+<script defer src="./pilgrim-private-brand.js"></script>
+
+
+<!-- PILGRIM_BROKER_TERMINALS_START -->
+<section id="pilgrim-broker-web-terminals"
+         aria-labelledby="pilgrim-broker-heading"
+         style="margin:24px auto;padding:20px;max-width:1100px;
+         border:1px solid #888;border-radius:14px;">
+  <h2 id="pilgrim-broker-heading">Broker Web Terminals</h2>
+  <p>Access the official broker platforms using your own broker account.</p>
+
+  <h3>HFM — MetaTrader WebTerminal</h3>
+  <p><a href="https://www.hfm.com/int/en/platforms/mt4-webterminal"
+        target="_blank" rel="noopener noreferrer">HFM MT4 WebTerminal</a></p>
+  <p><a href="https://www.hfm.com/int/en/platforms/mt5-webterminal"
+        target="_blank" rel="noopener noreferrer">HFM MT5 WebTerminal</a></p>
+
+  <h3>PU Prime — MetaTrader Web</h3>
+  <p><a href="https://www.puprime.com/mt4/"
+        target="_blank" rel="noopener noreferrer">PU Prime MT4 Platform</a></p>
+  <p><a href="https://www.puprime.com/mt5/"
+        target="_blank" rel="noopener noreferrer">PU Prime MT5 Platform</a></p>
+  <p><a href="https://helpcenter.puprime.com/hc/en-001/articles/6041990694159-How-do-I-access-PU-Web-Trader"
+        target="_blank" rel="noopener noreferrer">PU Prime Web Access Instructions</a></p>
+
+  <p style="font-size:13px;opacity:.8;">
+    External broker links. Logging in and trading take place on the
+    broker's own platform. These links do not establish a connection
+    between the broker and Pilgrim.
+  </p>
+</section>
+<!-- PILGRIM_BROKER_TERMINALS_END -->
+
+
+
+<!-- PILGRIM_INSTATRADE_START -->
+<section id="pilgrim-instatrade"
+ style="max-width:1100px;margin:24px auto;padding:20px;
+ border:1px solid #888;border-radius:14px;">
+ <h2>InstaTrade Live Terminal</h2>
+ <p>Open the official InstaTrade browser trading terminal.</p>
+ <p><a href="https://www.insta.trade/webtrader"
+ target="_blank" rel="noopener noreferrer">
+ Open InstaGear WebTrader</a></p>
+ <h3>Account Integration Documentation</h3>
+ <p><a href="https://www.instatrade.com/client_cabinet_api"
+ target="_blank" rel="noopener noreferrer">
+ InstaTrade Client Cabinet API</a></p>
+ <p><a href="https://www.insta.trade/trading_platform/webtrader"
+ target="_blank" rel="noopener noreferrer">
+ InstaTrade Trading Platforms</a></p>
+ <p style="font-size:13px">
+ External broker service. Account access requires broker authorization.
+ This link does not mean Pilgrim is connected or able to execute orders.
+ </p>
+</section>
+<!-- PILGRIM_INSTATRADE_END -->
+
+</body>
+</html>
