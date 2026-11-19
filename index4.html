@@ -1,0 +1,1638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pilgrim Real Services</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="https://suntomy.github.io/Pilgrimtrade/pilgrim-live-site.zip/terminals.html">
+<link rel="https://suntomy.github.io/Pilgrimtrade/pilgrim.zip/index.html">
+<link rel="https://suntomy.github.io/Pilgrimtrade/pilgrim-live-site.zip/index.html">
+<link rel="pilgrim-live-site.zip/index.html">
+<link rel="pilgrim.zip/index.html">
+<link rel="pilgrim-live-site.zip/terminals.html">
+<link rel="https://suntomy.github.io/Pilgrimtrade/index.html">
+<link rel="https://suntomy.github.io/Pilgrimtrade/">
+<link rel="https://suntomy.github.io/Pilgrimtrade/live-bridge.zip/index.html">
+<link rel="https://suntomy.github.io/Pilgrimtrade/pilgrim-live-site.zip/terminals.html">
+<link rel="https://suntomy.github.io/Pilgrimtrade/pilgrim/index.zip/index.html">
+
+<link rel="live-bridge.zip/index.html">
+<link rel="pilgrim/index.html">
+<script src="/app.js" defer></script>
+<link rel="stylesheet" href="./pilgrim-private-brand.css">
+<meta name="author" content="Olawale Abdul-Ganiyu Adeshina">
+</head>
+
+<!-- =====================================================
+ GLOBAL PILGRIM UNIVERSAL ZIP DISCOVERY & FILE READER
+ Version 1.0
+ ===================================================== -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<!-- GLOBAL PILGRIM TRADE CONNECTION -->
+<link rel="stylesheet" href="./gp-link.css">
+
+<script src="./gp-link.js" defer></script>
+<script>window.GLOBAL_PILGRIM.openTrade();</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="./gp-zip-reader.js" defer></script>
+<script>
+    
+/* ==============================================
+ GLOBAL PILGRIM ZIP RECOVERY AND FILE READER
+ Reads archive contents without disk extraction.
+============================================== */
+
+(function () {
+"use strict";
+
+const GPZip = {
+
+  archives: {},
+  registry: {},
+
+  // Archive URLs relative to the deployed index.
+  sources: [
+    "PILGRIM-SOURCE-BACKUP-20261116-085734.zip",
+    "pilgrim-live-sites.zip",
+    "Backup.zip",
+    "GlobalPilgrim-SekAI.zip",
+    "pilgrim-live-site.zip",
+    "pilgrim.zip",
+    "output.zip",
+    "live-bridge.zip",
+    "GPB-RECOVERED.zip"
+  ],
+
+  important: [
+    "index.html",
+    "app.js",
+    "style.css",
+    "styles.css",
+    "pilgrim-private-brand.js",
+    "server.js",
+    "status.js",
+    "terminal.html",
+    "package.json"
+  ],
+
+  async scan() {
+    if (!window.JSZip) {
+      throw new Error("JSZip library is not available");
+    }
+
+    const results = [];
+
+    for (const archiveName of this.sources) {
+      try {
+        const url = new URL(
+          archiveName,
+          document.baseURI
+        );
+
+        const response = await fetch(url, {
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
+
+        const buffer = await response.arrayBuffer();
+
+        if (buffer.byteLength > 150 * 1024 * 1024) {
+          throw new Error("Archive exceeds 150 MB limit");
+        }
+
+        const zip = await JSZip.loadAsync(buffer);
+
+        const paths = Object.keys(zip.files)
+          .filter(path => !zip.files[path].dir);
+
+        this.archives[archiveName] = zip;
+        this.registry[archiveName] = paths;
+
+        const matches = paths.filter(path =>
+          this.important.some(name =>
+            path.toLowerCase().endsWith(
+              name.toLowerCase()
+            )
+          )
+        );
+
+        results.push({
+          archive: archiveName,
+          status: "FOUND",
+          totalFiles: paths.length,
+          importantFiles: matches
+        });
+
+      } catch (error) {
+
+        results.push({
+          archive: archiveName,
+          status: "UNAVAILABLE",
+          error: error.message
+        });
+
+      }
+    }
+
+    window.GP_ZIP_REGISTRY = this.registry;
+
+    console.table(results);
+
+    return results;
+  },
+
+  // Search all discovered archives.
+  find(filename) {
+    const matches = [];
+
+    for (const archive in this.registry) {
+      for (const path of this.registry[archive]) {
+
+        if (path.toLowerCase().endsWith(
+          filename.toLowerCase()
+        )) {
+          matches.push({
+            archive,
+            path
+          });
+        }
+
+      }
+    }
+
+    return matches;
+  },
+
+  // Read an exact file inside an archive.
+  async readText(archiveName, internalPath) {
+    const zip = this.archives[archiveName];
+
+    if (!zip) {
+      throw new Error("Archive not loaded: " + archiveName);
+    }
+
+    const file = zip.file(internalPath);
+
+    if (!file) {
+      throw new Error("File not found: " + internalPath);
+    }
+
+    return await file.async("text");
+  },
+
+  // Read binary assets.
+  async readBlob(archiveName, internalPath) {
+    const zip = this.archives[archiveName];
+
+    if (!zip) throw new Error("Archive not loaded");
+
+    const file = zip.file(internalPath);
+
+    if (!file) throw new Error("File not found");
+
+    return await file.async("blob");
+  },
+
+  // Retrieve all copies of a named file.
+  async recover(filename) {
+    const matches = this.find(filename);
+
+    const recovered = [];
+
+    for (const item of matches) {
+      recovered.push({
+        archive: item.archive,
+        path: item.path,
+        content: await this.readText(
+          item.archive,
+          item.path
+        )
+      });
+    }
+
+    return recovered;
+  }
+
+};
+
+window.GPZip = GPZip;
+
+})();
+</script>
+<script>
+/* ==========================================
+   GLOBAL PILGRIM TRADE CONNECTION
+   Shared application integration
+========================================== */
+
+(function () {
+  "use strict";
+
+  const GP_TRADE_URL =
+    "https://suntomy.github.io/Pilgrimtrade/";
+
+  // Open Pilgrim Trading from any application.
+  window.openPilgrimTrade = function () {
+    window.open(
+      GP_TRADE_URL,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  // Create navigation button.
+  function addTradeLink() {
+    if (document.querySelector(".gp-trade-link")) return;
+
+    const link = document.createElement("a");
+
+    link.href = GP_TRADE_URL;
+    link.className = "gp-trade-link";
+    link.textContent = "OPEN PILGRIM TRADING ↗";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.title = "Open Global Pilgrim Trade Platform";
+
+    document.body.appendChild(link);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      addTradeLink
+    );
+  } else {
+    addTradeLink();
+  }
+
+  // Share the destination with other application modules.
+  window.GLOBAL_PILGRIM = {
+    tradeURL: GP_TRADE_URL,
+    openTrade: window.openPilgrimTrade
+  };
+
+})();
+</script>
+<!-- GLOBAL PILGRIM TRADE CONNECTION -->
+<link rel="stylesheet" href="./gp-link.css">
+
+<script src="./gp-link.js" defer></script>
+<style>
+/* GLOBAL PILGRIM SHARED NAVIGATION */
+
+.gp-trade-link {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 999999;
+  display: inline-block;
+  padding: 13px 19px;
+  border-radius: 9px;
+  background: #dcb34b;
+  color: #07182c !important;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+  text-decoration: none !important;
+  box-shadow: 0 4px 15px #0007;
+}
+
+.gp-trade-link:hover {
+  background: #f4d477;
+  transform: translateY(-2px);
+}
+
+.gp-trade-link:focus {
+  outline: 2px solid white;
+  outline-offset: 3px;
+}
+</style>
+<script>window.GLOBAL_PILGRIM.openTrade();</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="./gp-zip-reader.js" defer></script>
+<script>
+/* ==============================================
+ GLOBAL PILGRIM ZIP RECOVERY AND FILE READER
+ Reads archive contents without disk extraction.
+============================================== */
+
+(function () {
+"use strict";
+
+const GPZip = {
+
+  archives: {},
+  registry: {},
+
+  // Archive URLs relative to the deployed index.
+  sources: [
+    "PILGRIM-SOURCE-BACKUP-20261116-085734.zip",
+    "pilgrim-live-sites.zip",
+    "Backup.zip",
+    "GlobalPilgrim-SekAI.zip",
+    "pilgrim-live-site.zip",
+    "pilgrim.zip",
+    "output.zip",
+    "live-bridge.zip",
+    "GPB-RECOVERED.zip"
+  ],
+
+  important: [
+    "index.html",
+    "app.js",
+    "style.css",
+    "styles.css",
+    "pilgrim-private-brand.js",
+    "server.js",
+    "status.js",
+    "terminal.html",
+    "package.json"
+  ],
+
+  async scan() {
+    if (!window.JSZip) {
+      throw new Error("JSZip library is not available");
+    }
+
+    const results = [];
+
+    for (const archiveName of this.sources) {
+      try {
+        const url = new URL(
+          archiveName,
+          document.baseURI
+        );
+
+        const response = await fetch(url, {
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
+
+        const buffer = await response.arrayBuffer();
+
+        if (buffer.byteLength > 150 * 1024 * 1024) {
+          throw new Error("Archive exceeds 150 MB limit");
+        }
+
+        const zip = await JSZip.loadAsync(buffer);
+
+        const paths = Object.keys(zip.files)
+          .filter(path => !zip.files[path].dir);
+
+        this.archives[archiveName] = zip;
+        this.registry[archiveName] = paths;
+
+        const matches = paths.filter(path =>
+          this.important.some(name =>
+            path.toLowerCase().endsWith(
+              name.toLowerCase()
+            )
+          )
+        );
+
+        results.push({
+          archive: archiveName,
+          status: "FOUND",
+          totalFiles: paths.length,
+          importantFiles: matches
+        });
+
+      } catch (error) {
+
+        results.push({
+          archive: archiveName,
+          status: "UNAVAILABLE",
+          error: error.message
+        });
+
+      }
+    }
+
+    window.GP_ZIP_REGISTRY = this.registry;
+
+    console.table(results);
+
+    return results;
+  },
+
+  // Search all discovered archives.
+  find(filename) {
+    const matches = [];
+
+    for (const archive in this.registry) {
+      for (const path of this.registry[archive]) {
+
+        if (path.toLowerCase().endsWith(
+          filename.toLowerCase()
+        )) {
+          matches.push({
+            archive,
+            path
+          });
+        }
+
+      }
+    }
+
+    return matches;
+  },
+
+  // Read an exact file inside an archive.
+  async readText(archiveName, internalPath) {
+    const zip = this.archives[archiveName];
+
+    if (!zip) {
+      throw new Error("Archive not loaded: " + archiveName);
+    }
+
+    const file = zip.file(internalPath);
+
+    if (!file) {
+      throw new Error("File not found: " + internalPath);
+    }
+
+    return await file.async("text");
+  },
+
+  // Read binary assets.
+  async readBlob(archiveName, internalPath) {
+    const zip = this.archives[archiveName];
+
+    if (!zip) throw new Error("Archive not loaded");
+
+    const file = zip.file(internalPath);
+
+    if (!file) throw new Error("File not found");
+
+    return await file.async("blob");
+  },
+
+  // Retrieve all copies of a named file.
+  async recover(filename) {
+    const matches = this.find(filename);
+
+    const recovered = [];
+
+    for (const item of matches) {
+      recovered.push({
+        archive: item.archive,
+        path: item.path,
+        content: await this.readText(
+          item.archive,
+          item.path
+        )
+      });
+    }
+
+    return recovered;
+  }
+
+};
+
+window.GPZip = GPZip;
+
+})();
+</script>
+
+<!-- GLOBAL PILGRIM REAL INDEX APPLICATION VIEWER -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<section id="gp-app-center" style="
+background:#07182c;color:white;padding:20px;
+font-family:Arial;border-radius:12px">
+
+<h2 style="color:#e5b84c">
+GLOBAL PILGRIM APPLICATION CENTER
+</h2>
+
+<p>Discover and open applications from your ZIP archives.</p>
+
+<button onclick="GPRealIndex.scan()" style="padding:12px">
+SCAN ALL APPLICATIONS
+</button>
+
+<select id="gp-app-select"
+style="width:100%;padding:13px;margin-top:15px">
+<option value="">Select an application</option>
+</select>
+
+<button onclick="GPRealIndex.openSelected()"
+style="padding:12px;margin-top:10px">
+OPEN APPLICATION
+</button>
+
+<p id="gp-app-status">Waiting for scan...</p>
+
+<div id="gp-app-frame-container"></div>
+
+</section>
+
+<script>
+const GPRealIndex = {
+
+ archives: {},
+
+ zipNames: [
+  "PILGRIM-SOURCE-BACKUP-20261116-085734.zip",
+  "pilgrim-live-sites.zip",
+  "Backup.zip",
+  "GlobalPilgrim-SekAI.zip",
+  "pilgrim-live-site.zip",
+  "pilgrim.zip",
+  "output.zip",
+  "live-bridge.zip",
+  "GPB-RECOVERED.zip"
+ ],
+
+ applications: [],
+
+ async scan() {
+
+  const select = document.getElementById("gp-app-select");
+  const status = document.getElementById("gp-app-status");
+
+  select.innerHTML =
+   '<option value="">Select an application</option>';
+
+  this.applications = [];
+  this.archives = {};
+
+  status.textContent = "Scanning ZIP archives...";
+
+  for (const zipName of this.zipNames) {
+
+   try {
+
+    const url = new URL(
+     zipName, document.baseURI
+    );
+
+    const response = await fetch(url);
+
+    if (!response.ok) continue;
+
+    const buffer = await response.arrayBuffer();
+
+    if (buffer.byteLength > 150 * 1024 * 1024)
+      continue;
+
+    const zip = await JSZip.loadAsync(buffer);
+
+    this.archives[zipName] = zip;
+
+    for (const path of Object.keys(zip.files)) {
+
+     const file = zip.files[path];
+
+     if (file.dir) continue;
+
+     if (path.toLowerCase().endsWith("/index.html") ||
+         path.toLowerCase() === "index.html") {
+
+      const id = this.applications.length;
+
+      this.applications.push({
+       id,
+       archive: zipName,
+       path
+      });
+
+      const option = document.createElement("option");
+
+      option.value = id;
+
+      option.textContent =
+       zipName + " → " + path;
+
+      select.appendChild(option);
+     }
+    }
+
+   } catch(error) {
+    console.warn(zipName, error.message);
+   }
+  }
+
+  status.textContent =
+   this.applications.length +
+   " application index files discovered.";
+ },
+
+ async openSelected() {
+
+  const id = Number(
+   document.getElementById("gp-app-select").value
+  );
+
+  const app = this.applications.find(x => x.id === id);
+
+  if (!app) {
+   alert("Select an application first.");
+   return;
+  }
+
+  const zip = this.archives[app.archive];
+
+  const html = await zip.file(app.path).async("text");
+
+  const base = app.path.substring(
+   0, app.path.lastIndexOf("/") + 1
+  );
+
+  // Prepare archive assets as browser Blob URLs.
+  const assetURLs = new Map();
+
+  for (const [path, file] of Object.entries(zip.files)) {
+
+   if (file.dir || path === app.path) continue;
+
+   const blob = await file.async("blob");
+
+   assetURLs.set(
+    path,
+    URL.createObjectURL(blob)
+   );
+  }
+
+  // Rewrite relative asset references.
+  const doc = new DOMParser().parseFromString(
+   html, "text/html"
+  );
+
+  function resolveAsset(value) {
+
+   if (!value || /^(https?:|data:|blob:|#|\/\/)/i.test(value))
+    return value;
+
+   const clean = value.split(/[?#]/)[0];
+
+   const path = new URL(
+    clean,
+    "https://gp-archive.invalid/" + base
+   ).pathname.substring(1);
+
+   return assetURLs.get(path) || value;
+  }
+
+  doc.querySelectorAll(
+   '[src], [href]'
+  ).forEach(element => {
+
+   for (const attribute of ["src", "href"]) {
+
+    if (element.hasAttribute(attribute)) {
+     element.setAttribute(
+      attribute,
+      resolveAsset(element.getAttribute(attribute))
+     );
+    }
+   }
+  });
+
+  const output =
+   document.getElementById("gp-app-frame-container");
+
+  output.innerHTML = "";
+
+  const frame = document.createElement("iframe");
+
+  frame.style.cssText =
+   "width:100%;height:85vh;border:1px solid #d6ad43;border-radius:10px";
+
+  frame.setAttribute(
+   "sandbox",
+   "allow-scripts allow-forms allow-same-origin allow-downloads"
+  );
+
+  output.appendChild(frame);
+
+  frame.srcdoc = doc.documentElement.outerHTML;
+
+  document.getElementById("gp-app-status").textContent =
+   "Opened: " + app.archive + " / " + app.path;
+ }
+
+};
+</script>
+
+<script>
+/* ==========================================
+   GLOBAL PILGRIM TRADE CONNECTION
+   Shared application integration
+========================================== */
+
+(function () {
+  "use strict";
+
+  const GP_TRADE_URL =
+    "https://suntomy.github.io/Pilgrimtrade/";
+
+  // Open Pilgrim Trading from any application.
+  window.openPilgrimTrade = function () {
+    window.open(
+      GP_TRADE_URL,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  // Create navigation button.
+  function addTradeLink() {
+    if (document.querySelector(".gp-trade-link")) return;
+
+    const link = document.createElement("a");
+
+    link.href = GP_TRADE_URL;
+    link.className = "gp-trade-link";
+    link.textContent = "OPEN PILGRIM TRADING ↗";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.title = "Open Global Pilgrim Trade Platform";
+
+    document.body.appendChild(link);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      addTradeLink
+    );
+  } else {
+    addTradeLink();
+  }
+
+  // Share the destination with other application modules.
+  window.GLOBAL_PILGRIM = {
+    tradeURL: GP_TRADE_URL,
+    openTrade: window.openPilgrimTrade
+  };
+
+})();
+</script>
+<script>
+<!-- GLOBAL PILGRIM REAL INDEX APPLICATION VIEWER -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<section id="gp-app-center" style="
+background:#07182c;color:white;padding:20px;
+font-family:Arial;border-radius:12px">
+
+<h2 style="color:#e5b84c">
+GLOBAL PILGRIM APPLICATION CENTER
+</h2>
+
+<p>Discover and open applications from your ZIP archives.</p>
+
+<button onclick="GPRealIndex.scan()" style="padding:12px">
+SCAN ALL APPLICATIONS
+</button>
+
+<select id="gp-app-select"
+style="width:100%;padding:13px;margin-top:15px">
+<option value="">Select an application</option>
+</select>
+
+<button onclick="GPRealIndex.openSelected()"
+style="padding:12px;margin-top:10px">
+OPEN APPLICATION
+</button>
+
+<p id="gp-app-status">Waiting for scan...</p>
+
+<div id="gp-app-frame-container"></div>
+
+</section>
+
+<script>
+const GPRealIndex = {
+
+ archives: {},
+
+ zipNames: [
+  "PILGRIM-SOURCE-BACKUP-20261116-085734.zip",
+  "pilgrim-live-sites.zip",
+  "Backup.zip",
+  "GlobalPilgrim-SekAI.zip",
+  "pilgrim-live-site.zip",
+  "pilgrim.zip",
+  "output.zip",
+  "live-bridge.zip",
+  "GPB-RECOVERED.zip"
+ ],
+
+ applications: [],
+
+ async scan() {
+
+  const select = document.getElementById("gp-app-select");
+  const status = document.getElementById("gp-app-status");
+
+  select.innerHTML =
+   '<option value="">Select an application</option>';
+
+  this.applications = [];
+  this.archives = {};
+
+  status.textContent = "Scanning ZIP archives...";
+
+  for (const zipName of this.zipNames) {
+
+   try {
+
+    const url = new URL(
+     zipName, document.baseURI
+    );
+
+    const response = await fetch(url);
+
+    if (!response.ok) continue;
+
+    const buffer = await response.arrayBuffer();
+
+    if (buffer.byteLength > 150 * 1024 * 1024)
+      continue;
+
+    const zip = await JSZip.loadAsync(buffer);
+
+    this.archives[zipName] = zip;
+
+    for (const path of Object.keys(zip.files)) {
+
+     const file = zip.files[path];
+
+     if (file.dir) continue;
+
+     if (path.toLowerCase().endsWith("/index.html") ||
+         path.toLowerCase() === "index.html") {
+
+      const id = this.applications.length;
+
+      this.applications.push({
+       id,
+       archive: zipName,
+       path
+      });
+
+      const option = document.createElement("option");
+
+      option.value = id;
+
+      option.textContent =
+       zipName + " → " + path;
+
+      select.appendChild(option);
+     }
+    }
+
+   } catch(error) {
+    console.warn(zipName, error.message);
+   }
+  }
+
+  status.textContent =
+   this.applications.length +
+   " application index files discovered.";
+ },
+
+ async openSelected() {
+
+  const id = Number(
+   document.getElementById("gp-app-select").value
+  );
+
+  const app = this.applications.find(x => x.id === id);
+
+  if (!app) {
+   alert("Select an application first.");
+   return;
+  }
+
+  const zip = this.archives[app.archive];
+
+  const html = await zip.file(app.path).async("text");
+
+  const base = app.path.substring(
+   0, app.path.lastIndexOf("/") + 1
+  );
+
+  // Prepare archive assets as browser Blob URLs.
+  const assetURLs = new Map();
+
+  for (const [path, file] of Object.entries(zip.files)) {
+
+   if (file.dir || path === app.path) continue;
+
+   const blob = await file.async("blob");
+
+   assetURLs.set(
+    path,
+    URL.createObjectURL(blob)
+   );
+  }
+
+  // Rewrite relative asset references.
+  const doc = new DOMParser().parseFromString(
+   html, "text/html"
+  );
+
+  function resolveAsset(value) {
+
+   if (!value || /^(https?:|data:|blob:|#|\/\/)/i.test(value))
+    return value;
+
+   const clean = value.split(/[?#]/)[0];
+
+   const path = new URL(
+    clean,
+    "https://gp-archive.invalid/" + base
+   ).pathname.substring(1);
+
+   return assetURLs.get(path) || value;
+  }
+
+  doc.querySelectorAll(
+   '[src], [href]'
+  ).forEach(element => {
+
+   for (const attribute of ["src", "href"]) {
+
+    if (element.hasAttribute(attribute)) {
+     element.setAttribute(
+      attribute,
+      resolveAsset(element.getAttribute(attribute))
+     );
+    }
+   }
+  });
+
+  const output =
+   document.getElementById("gp-app-frame-container");
+
+  output.innerHTML = "";
+
+  const frame = document.createElement("iframe");
+
+  frame.style.cssText =
+   "width:100%;height:85vh;border:1px solid #d6ad43;border-radius:10px";
+
+  frame.setAttribute(
+   "sandbox",
+   "allow-scripts allow-forms allow-same-origin allow-downloads"
+  );
+
+  output.appendChild(frame);
+
+  frame.srcdoc = doc.documentElement.outerHTML;
+
+  document.getElementById("gp-app-status").textContent =
+   "Opened: " + app.archive + " / " + app.path;
+ }
+
+};
+</script>
+</script>
+<style>
+/* GLOBAL PILGRIM SHARED NAVIGATION */
+
+.gp-trade-link {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 999999;
+  display: inline-block;
+  padding: 13px 19px;
+  border-radius: 9px;
+  background: #dcb34b;
+  color: #07182c !important;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+  text-decoration: none !important;
+  box-shadow: 0 4px 15px #0007;
+}
+
+.gp-trade-link:hover {
+  background: #f4d477;
+  transform: translateY(-2px);
+}
+
+.gp-trade-link:focus {
+  outline: 2px solid white;
+  outline-offset: 3px;
+}
+</style>
+
+<!-- GLOBAL PILGRIM REAL INDEX APPLICATION VIEWER -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<section id="gp-app-center" style="
+background:#07182c;color:white;padding:20px;
+font-family:Arial;border-radius:12px">
+
+<h2 style="color:#e5b84c">
+GLOBAL PILGRIM APPLICATION CENTER
+</h2>
+
+<p>Discover and open applications from your ZIP archives.</p>
+
+<button onclick="GPRealIndex.scan()" style="padding:12px">
+SCAN ALL APPLICATIONS
+</button>
+
+<select id="gp-app-select"
+style="width:100%;padding:13px;margin-top:15px">
+<option value="">Select an application</option>
+</select>
+
+<button onclick="GPRealIndex.openSelected()"
+style="padding:12px;margin-top:10px">
+OPEN APPLICATION
+</button>
+
+<p id="gp-app-status">Waiting for scan...</p>
+
+<div id="gp-app-frame-container"></div>
+
+</section>
+
+<script>
+const GPRealIndex = {
+
+ archives: {},
+
+ zipNames: [
+  "PILGRIM-SOURCE-BACKUP-20261116-085734.zip",
+  "pilgrim-live-sites.zip",
+  "Backup.zip",
+  "GlobalPilgrim-SekAI.zip",
+  "pilgrim-live-site.zip",
+  "pilgrim.zip",
+  "output.zip",
+  "live-bridge.zip",
+  "GPB-RECOVERED.zip"
+ ],
+
+ applications: [],
+
+ async scan() {
+
+  const select = document.getElementById("gp-app-select");
+  const status = document.getElementById("gp-app-status");
+
+  select.innerHTML =
+   '<option value="">Select an application</option>';
+
+  this.applications = [];
+  this.archives = {};
+
+  status.textContent = "Scanning ZIP archives...";
+
+  for (const zipName of this.zipNames) {
+
+   try {
+
+    const url = new URL(
+     zipName, document.baseURI
+    );
+
+    const response = await fetch(url);
+
+    if (!response.ok) continue;
+
+    const buffer = await response.arrayBuffer();
+
+    if (buffer.byteLength > 150 * 1024 * 1024)
+      continue;
+
+    const zip = await JSZip.loadAsync(buffer);
+
+    this.archives[zipName] = zip;
+
+    for (const path of Object.keys(zip.files)) {
+
+     const file = zip.files[path];
+
+     if (file.dir) continue;
+
+     if (path.toLowerCase().endsWith("/index.html") ||
+         path.toLowerCase() === "index.html") {
+
+      const id = this.applications.length;
+
+      this.applications.push({
+       id,
+       archive: zipName,
+       path
+      });
+
+      const option = document.createElement("option");
+
+      option.value = id;
+
+      option.textContent =
+       zipName + " → " + path;
+
+      select.appendChild(option);
+     }
+    }
+
+   } catch(error) {
+    console.warn(zipName, error.message);
+   }
+  }
+
+  status.textContent =
+   this.applications.length +
+   " application index files discovered.";
+ },
+
+ async openSelected() {
+
+  const id = Number(
+   document.getElementById("gp-app-select").value
+  );
+
+  const app = this.applications.find(x => x.id === id);
+
+  if (!app) {
+   alert("Select an application first.");
+   return;
+  }
+
+  const zip = this.archives[app.archive];
+
+  const html = await zip.file(app.path).async("text");
+
+  const base = app.path.substring(
+   0, app.path.lastIndexOf("/") + 1
+  );
+
+  // Prepare archive assets as browser Blob URLs.
+  const assetURLs = new Map();
+
+  for (const [path, file] of Object.entries(zip.files)) {
+
+   if (file.dir || path === app.path) continue;
+
+   const blob = await file.async("blob");
+
+   assetURLs.set(
+    path,
+    URL.createObjectURL(blob)
+   );
+  }
+
+  // Rewrite relative asset references.
+  const doc = new DOMParser().parseFromString(
+   html, "text/html"
+  );
+
+  function resolveAsset(value) {
+
+   if (!value || /^(https?:|data:|blob:|#|\/\/)/i.test(value))
+    return value;
+
+   const clean = value.split(/[?#]/)[0];
+
+   const path = new URL(
+    clean,
+    "https://gp-archive.invalid/" + base
+   ).pathname.substring(1);
+
+   return assetURLs.get(path) || value;
+  }
+
+  doc.querySelectorAll(
+   '[src], [href]'
+  ).forEach(element => {
+
+   for (const attribute of ["src", "href"]) {
+
+    if (element.hasAttribute(attribute)) {
+     element.setAttribute(
+      attribute,
+      resolveAsset(element.getAttribute(attribute))
+     );
+    }
+   }
+  });
+
+  const output =
+   document.getElementById("gp-app-frame-container");
+
+  output.innerHTML = "";
+
+  const frame = document.createElement("iframe");
+
+  frame.style.cssText =
+   "width:100%;height:85vh;border:1px solid #d6ad43;border-radius:10px";
+
+  frame.setAttribute(
+   "sandbox",
+   "allow-scripts allow-forms allow-same-origin allow-downloads"
+  );
+
+  output.appendChild(frame);
+
+  frame.srcdoc = doc.documentElement.outerHTML;
+
+  document.getElementById("gp-app-status").textContent =
+   "Opened: " + app.archive + " / " + app.path;
+ }
+
+};
+</script>
+
+
+<div id="gp-zip-manager" style="
+ position:fixed;bottom:12px;right:12px;z-index:99999;
+ background:#0b1d32;color:white;padding:15px;
+ border:1px solid #d6ad43;border-radius:12px;
+ width:min(360px,calc(100vw - 24px));
+ font-family:Arial;box-shadow:0 5px 25px #0008">
+
+ <div style="color:#e5b84c;font-weight:bold">
+ GLOBAL PILGRIM ZIP NETWORK
+ </div>
+
+ <p id="gp-zip-status" style="font-size:12px">
+ Waiting for ZIP discovery...
+ </p>
+
+ <button onclick="GPArchive.discover()" style="
+ background:#e5b84c;border:0;padding:10px;
+ border-radius:5px;width:100%;font-weight:bold">
+ SCAN ZIP ARCHIVES
+ </button>
+
+ <div id="gp-zip-results" style="
+ max-height:190px;overflow:auto;font-size:12px;
+ margin-top:10px"></div>
+
+ <button onclick="document.getElementById('gp-zip-manager').style.display='none'"
+ style="margin-top:8px;background:#263d55;color:white;
+ border:0;padding:8px;border-radius:5px">
+ CLOSE
+ </button>
+</div>
+
+<script>
+(function () {
+"use strict";
+
+const GPArchive = {
+
+ archives: {},
+ files: {},
+ errors: [],
+
+ // ZIP archives supplied in the project registry.
+ candidates: [
+   "PILGRIM-SOURCE-BACKUP-20261116-085734.zip",
+   "pilgrim-live-sites.zip",
+   "Backup.zip",
+   "GlobalPilgrim-SekAI.zip",
+   "pilgrim-live-site.zip",
+   "pilgrim.zip",
+   "output.zip"
+ ],
+
+ // Important application files to discover.
+ importantFiles: [
+   "index.html",
+   "app.js",
+   "style.css",
+   "styles.css",
+   "pilgrim-private-brand.js",
+   "server.js",
+   "status.js",
+   "terminal.html",
+   "package.json",
+   "api-config",
+   "integration",
+   "certificates",
+   "backups",
+   "reports",
+   "backend",
+   "node_modules",
+   "log",
+   "archive"
+ ],
+
+ status(message) {
+   document.getElementById("gp-zip-status").textContent = message;
+ },
+
+ async discover() {
+
+   if (typeof JSZip === "undefined") {
+     this.status("ERROR: ZIP reader library unavailable.");
+     return;
+   }
+
+   this.errors = [];
+   this.archives = {};
+   this.files = {};
+
+   const output = document.getElementById("gp-zip-results");
+   output.innerHTML = "";
+
+   this.status("Searching deployed ZIP archives...");
+
+   for (const name of this.candidates) {
+
+     try {
+
+       const url = new URL(
+         "./" + encodeURIComponent(name),
+         window.location.href
+       );
+
+       const response = await fetch(url.href, {
+         cache: "no-store",
+         credentials: "same-origin"
+       });
+
+       if (!response.ok) {
+         throw new Error("HTTP " + response.status);
+       }
+
+       const size = Number(response.headers.get("content-length") || 0);
+
+       // Avoid unexpectedly downloading very large backups.
+       if (size > 150 * 1024 * 1024) {
+         throw new Error("Archive exceeds 150 MB scan limit");
+       }
+
+       const buffer = await response.arrayBuffer();
+
+       if (buffer.byteLength > 150 * 1024 * 1024) {
+         throw new Error("Archive exceeds 150 MB scan limit");
+       }
+
+       const zip = await JSZip.loadAsync(buffer);
+
+       const entries = Object.keys(zip.files)
+         .filter(path => !zip.files[path].dir);
+
+       this.archives[name] = zip;
+
+       this.files[name] = entries;
+
+       this.showArchive(name, entries);
+
+     } catch (error) {
+
+       this.errors.push({
+         archive:name,
+         error:error.message
+       });
+
+       this.showError(name, error.message);
+     }
+   }
+
+   const found = Object.keys(this.archives).length;
+
+   this.status(
+     "Scan finished: " + found +
+     " ZIP archive(s) accessible."
+   );
+
+   window.GP_ZIP_ARCHIVES = this.archives;
+   window.GP_ZIP_REGISTRY = this.files;
+
+   console.log("GLOBAL PILGRIM ZIP REGISTRY", this.files);
+   console.log("GLOBAL PILGRIM ZIP ERRORS", this.errors);
+
+   return this.files;
+ },
+
+ showArchive(name, entries) {
+
+   const output = document.getElementById("gp-zip-results");
+
+   const matches = entries.filter(path =>
+     this.importantFiles.some(item =>
+       path.toLowerCase().endsWith(item.toLowerCase())
+     )
+   );
+
+   const box = document.createElement("div");
+
+   box.style.cssText =
+     "background:#17334d;padding:9px;margin:7px 0;border-radius:6px";
+
+   const title = document.createElement("b");
+   title.style.color = "#20c997";
+   title.textContent = "FOUND: " + name;
+
+   const details = document.createElement("div");
+   details.textContent =
+     entries.length + " files | " +
+     matches.length + " important matches";
+
+   box.append(title, details);
+
+   matches.slice(0, 30).forEach(path => {
+     const line = document.createElement("div");
+     line.style.cssText = "margin-top:5px;overflow-wrap:anywhere";
+     line.textContent = "✓ " + path;
+     box.appendChild(line);
+   });
+
+   output.appendChild(box);
+ },
+
+ showError(name, message) {
+
+   const output = document.getElementById("gp-zip-results");
+
+   const line = document.createElement("div");
+
+   line.style.cssText =
+     "color:#ff9a9a;padding:5px;border-bottom:1px solid #345";
+
+   line.textContent = "NOT FOUND: " + name + " (" + message + ")";
+
+   output.appendChild(line);
+ },
+
+ // List all files in a discovered ZIP.
+ list(archiveName) {
+
+   return this.files[archiveName] || [];
+ },
+
+ // Search for a filename across all discovered ZIPs.
+ find(filename) {
+
+   const results = [];
+
+   for (const archiveName in this.files) {
+
+     for (const path of this.files[archiveName]) {
+
+       if (path.toLowerCase().endsWith(
+         filename.toLowerCase()
+       )) {
+
+         results.push({
+           archive:archiveName,
+           path:path
+         });
+       }
+     }
+   }
+
+   return results;
+ },
+
+ // Read a file without extracting the ZIP.
+ async readText(archiveName, path) {
+
+   const zip = this.archives[archiveName];
+
+   if (!zip) {
+     throw new Error("Archive not discovered: " + archiveName);
+   }
+
+   const file = zip.file(path);
+
+   if (!file) {
+     throw new Error("File not found: " + path);
+   }
+
+   return await file.async("text");
+ },
+
+ // Read binary assets without extracting them.
+ async readBlob(archiveName, path) {
+
+   const zip = this.archives[archiveName];
+
+   if (!zip) {
+     throw new Error("Archive not discovered");
+   }
+
+   const file = zip.file(path);
+
+   if (!file) {
+     throw new Error("File not found: " + path);
+   }
+
+   return await file.async("blob");
+ },
+
+ // Read an application file using its filename.
+ async findAndRead(filename) {
+
+   const matches = this.find(filename);
+
+   if (!matches.length) {
+     throw new Error("No matching file: " + filename);
+   }
+
+   const result = [];
+
+   for (const match of matches) {
+
+     result.push({
+       archive:match.archive,
+       path:match.path,
+       content:await this.readText(
+         match.archive,
+         match.path
+       )
+     });
+   }
+
+   return result;
+ },
+
+ // Load a CSS file into the current page.
+ async loadCSS(archiveName, path) {
+
+   const css = await this.readText(archiveName, path);
+
+   const style = document.createElement("style");
+
+   style.textContent = css;
+
+   document.head.appendChild(style);
+
+   return style;
+ },
+
+ // Load a browser JavaScript file after explicit selection.
+ async loadJS(archiveName, path) {
+
+   const code = await this.readText(archiveName, path);
+
+   const script = document.createElement("script");
+
+   script.textContent = code;
+
+   document.body.appendChild(script);
+
+   return script;
+ }
+
+};
+
+window.GPArchive = GPArchive;
+
+})();
+</script>
+<!-- END GLOBAL PILGRIM ZIP NETWORK -->
+
+<body>
+<main>
+  <h1>PILGRIM</h1>
+  <h2>Real Services Dashboard</h2>
+  <p id="health">Checking backend...</p>
+
+  <section>
+    <h3>Broker connections</h3>
+    <pre id="brokers">Checking...</pre>
+  </section>
+
+  <section>
+    <h3>Nigerian bank account verification</h3>
+    <label for="bank">Bank</label>
+    <select id="bank"><option value="">Loading supported banks...</option></select>
+
+    <label for="account">Account number</label>
+    <input id="account" inputmode="numeric" maxlength="10"
+           placeholder="10-digit account number">
+
+    <button id="verify">Verify account name</button>
+    <p id="verification">No account verified.</p>
+  </section>
+
+  <section>
+    <h3>Withdrawals</h3>
+    <p>Bank payout service is locked until a verified wallet ledger,
+       user authentication and provider approval are configured.</p>
+    <p id="payout">No money has been transferred.</p>
+  </section>
+
+  <footer>Pilgrim Real Services — no simulated balances or profits.</footer>
+</main>
+<script defer src="./pilgrim-private-brand.js"></script>
+<script>const html = await GPArchive.findAndRead("index.html");
+console.log(html);</script>
+
+</body>
+</html>
