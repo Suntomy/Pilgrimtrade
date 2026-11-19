@@ -1,0 +1,679 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07182c">
+<title>Global Pilgrim Trade Platform</title>
+
+<style>
+:root {
+  --bg:#07182c;
+  --panel:#102943;
+  --gold:#e5b84c;
+  --white:#f5f7fb;
+  --muted:#a9bbcf;
+  --green:#20c997;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--white);
+  font-family:Arial,sans-serif;
+}
+button,input,textarea {font:inherit}
+button {
+  cursor:pointer;
+  border:0;
+  border-radius:7px;
+  padding:12px 18px;
+  font-weight:bold;
+}
+.primary {background:var(--gold);color:#102039}
+.secondary {background:#25435f;color:white}
+.hidden {display:none!important}
+header {
+  background:#091f36;
+  padding:18px 5%;
+  border-bottom:1px solid #28435c;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+.brand {
+  color:var(--gold);
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+.brand small {
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:2px;
+  margin-top:5px;
+}
+main {max-width:1250px;margin:auto;padding:25px 4%}
+.cover {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:25px;
+  background:
+  radial-gradient(ellipse at top,#1b4261 0%,#07182c 65%);
+}
+.cover-content {max-width:750px}
+.logo {
+  width:105px;height:105px;
+  margin:auto auto 25px;
+  border:3px solid var(--gold);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:32px;
+  color:var(--gold);
+  font-weight:bold;
+}
+.cover h1 {
+  font-size:clamp(30px,6vw,55px);
+  color:var(--gold);
+  margin:15px 0;
+}
+.cover p {color:var(--muted);line-height:1.8}
+.cover button {margin-top:25px}
+.login-screen {
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+.login-card {
+  width:100%;
+  max-width:400px;
+  padding:30px;
+  background:var(--panel);
+  border:1px solid #36516b;
+  border-radius:15px;
+}
+.login-card h2 {color:var(--gold)}
+input,textarea {
+  width:100%;
+  background:#071c30;
+  color:white;
+  border:1px solid #35516b;
+  border-radius:7px;
+  padding:13px;
+  margin:8px 0 15px;
+  outline:none;
+}
+input:focus,textarea:focus {border-color:var(--gold)}
+label {color:var(--muted);font-size:13px}
+#loginError {color:#ff7777;font-size:13px}
+.dashboard {min-height:100vh}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
+  margin:22px 0;
+}
+.card {
+  background:var(--panel);
+  border:1px solid #28445f;
+  padding:20px;
+  border-radius:11px;
+}
+.card h3 {color:var(--gold);margin-top:0}
+.big {font-size:23px;font-weight:bold;margin-top:12px}
+.section {
+  background:var(--panel);
+  padding:22px;
+  border-radius:11px;
+  margin:18px 0;
+  border:1px solid #28445f;
+}
+.section h2 {
+  font-size:19px;
+  color:var(--gold);
+  margin-top:0;
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:15px;
+}
+.entry {
+  padding:13px;
+  background:#081d32;
+  border-radius:7px;
+  margin:10px 0;
+  overflow-wrap:anywhere;
+}
+.entry a {color:#69c5ff}
+.entry small {display:block;color:var(--muted);margin-top:7px}
+.entry button {padding:7px 10px;margin:7px 5px 0 0}
+.empty {color:var(--muted);font-size:13px}
+footer {
+  text-align:center;
+  padding:25px;
+  color:var(--muted);
+  font-size:12px;
+}
+nav {display:flex;gap:8px;flex-wrap:wrap}
+nav button {padding:9px 12px}
+.status {color:var(--green);font-size:12px}
+#htmlPreview {
+  width:100%;
+  height:180px;
+  border:1px solid #35516b;
+  border-radius:7px;
+  background:white;
+}
+@media(max-width:600px) {
+  header {align-items:flex-start;flex-direction:column}
+  nav {width:100%}
+  nav button {flex:1}
+  .section {padding:15px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- COVER PAGE -->
+<section id="cover" class="cover">
+  <div class="cover-content">
+    <div class="logo">GP</div>
+    <h1>GLOBAL PILGRIM</h1>
+    <h2>TRADE PLATFORM</h2>
+    <p>
+      A centralized private trading workspace for Global Pilgrim.
+      Monitor activities, organize resources, manage links,
+      and access your personal administrative dashboard.
+    </p>
+    <p>GLOBAL PILGRIM TRADE PLATFORM</p>
+    <button class="primary" onclick="showLogin()">
+      ENTER PLATFORM →
+    </button>
+    <footer>Powered by Global Pilgrim</footer>
+  </div>
+</section>
+
+<!-- LOGIN PAGE -->
+<section id="login" class="login-screen hidden">
+  <div class="login-card">
+    <div class="logo">GP</div>
+    <h2>OWNER LOGIN</h2>
+    <p class="empty">Authorized owner access only.</p>
+
+    <form onsubmit="login(event)">
+      <label>Owner ID</label>
+      <input id="ownerID" autocomplete="username"
+             placeholder="Enter owner ID" required>
+
+      <label>Password</label>
+      <input id="ownerPassword" type="password"
+             autocomplete="current-password"
+             placeholder="Enter password" required>
+
+      <p id="loginError"></p>
+      <button class="primary" style="width:100%">
+        LOGIN TO DASHBOARD
+      </button>
+    </form>
+    <button class="secondary" onclick="showCover()"
+            style="width:100%;margin-top:12px">
+      BACK TO COVER
+    </button>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="dashboard hidden">
+
+<header>
+  <div class="brand">
+    GLOBAL PILGRIM
+    <small>TRADE PLATFORM | OWNER DASHBOARD</small>
+  </div>
+  <nav>
+    <button class="secondary" onclick="showDashboardSection('overview')">Home</button>
+    <button class="secondary" onclick="showDashboardSection('links')">My Links</button>
+    <button class="secondary" onclick="showDashboardSection('history')">History</button>
+    <button class="secondary" onclick="logout()">Logout</button>
+  </nav>
+</header>
+
+<main>
+  <h2>Welcome, Platform Owner</h2>
+  <p class="status">● OWNER SESSION ACTIVE</p>
+
+  <div id="overview">
+    <div class="stats">
+      <div class="card">
+        <h3>LOCAL TIME</h3>
+        <div class="big" id="clock">--:--:--</div>
+      </div>
+      <div class="card">
+        <h3>DATE</h3>
+        <div class="big" id="today">---</div>
+      </div>
+      <div class="card">
+        <h3>PLATFORM STATUS</h3>
+        <div class="big status">ONLINE</div>
+      </div>
+      <div class="card">
+        <h3>SAVED LINKS</h3>
+        <div class="big" id="linkCount">0</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>GLOBAL PILGRIM NEWS</h2>
+      <p class="empty">
+        News workspace. Live news requires a connected news API.
+      </p>
+      <div id="news">
+        <div class="entry">
+          <b>Global Trade News</b>
+          <small>News feed awaiting API connection.</small>
+        </div>
+        <div class="entry">
+          <b>Financial Markets</b>
+          <small>Market feed awaiting API connection.</small>
+        </div>
+        <div class="entry">
+          <b>Technology and Blockchain</b>
+          <small>Technology feed awaiting API connection.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LINK MANAGEMENT -->
+  <div id="links" class="section hidden">
+    <h2>MY HTML / URL / WWW WORKSPACE</h2>
+    <p class="empty">
+      Save your web addresses, HTML snippets and external resources here.
+    </p>
+
+    <div class="grid">
+      <div>
+        <h3>HTML CODE</h3>
+        <label>Paste HTML code</label>
+        <textarea id="htmlCode" rows="5"
+          placeholder="<h1>My project</h1>"></textarea>
+        <button class="primary" onclick="saveHtml()">SAVE HTML</button>
+        <button class="secondary" onclick="previewHtml()">PREVIEW</button>
+      </div>
+
+      <div>
+        <h3>URL LINK</h3>
+        <label>Enter website URL</label>
+        <input id="urlLink" placeholder="https://example.com">
+        <button class="primary" onclick="saveLink('URL','urlLink')">
+          SAVE URL
+        </button>
+      </div>
+
+      <div>
+        <h3>WWW LINK</h3>
+        <label>Enter WWW address</label>
+        <input id="wwwLink" placeholder="www.example.com">
+        <button class="primary" onclick="saveLink('WWW','wwwLink')">
+          SAVE WWW
+        </button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>HTML PREVIEW</h3>
+      <iframe id="htmlPreview" sandbox=""
+        title="Safe HTML preview"></iframe>
+      <p class="empty">Scripts and external navigation are disabled in this preview.</p>
+    </div>
+
+    <h3>SAVED RESOURCES</h3>
+    <div id="savedLinks"></div>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="history" class="section hidden">
+    <h2>ACTIVITY HISTORY</h2>
+    <p class="empty">Your recent platform activities.</p>
+    <div id="historyList"></div>
+    <button class="secondary" onclick="clearHistory()">
+      CLEAR HISTORY
+    </button>
+  </div>
+
+  <div class="section">
+    <h2>PLATFORM INFORMATION</h2>
+    <p>Platform: Global Pilgrim Trade Platform</p>
+    <p>Access: Owner Dashboard</p>
+    <p>Interface: HTML / CSS / JavaScript</p>
+    <p>Storage: Browser local storage</p>
+  </div>
+</main>
+
+<footer>
+  GLOBAL PILGRIM TRADE PLATFORM<br>
+  Owner Administration Workspace
+</footer>
+</section>
+
+<script>
+// ====================================
+// OWNER LOGIN CONFIGURATION
+// ====================================
+// CHANGE BOTH VALUES BEFORE USE.
+// This front-end-only login is a demo,
+// NOT secure server-side authentication.
+
+const OWNER_ID = "CHANGE-OWNER-ID";
+const OWNER_PASSWORD = "CHANGE-THIS-PASSWORD";
+
+const $ = id => document.getElementById(id);
+
+function showCover() {
+  $("cover").classList.remove("hidden");
+  $("login").classList.add("hidden");
+  $("dashboard").classList.add("hidden");
+}
+
+function showLogin() {
+  $("cover").classList.add("hidden");
+  $("login").classList.remove("hidden");
+  $("dashboard").classList.add("hidden");
+}
+
+function login(event) {
+  event.preventDefault();
+
+  if ($("ownerID").value === OWNER_ID &&
+      $("ownerPassword").value === OWNER_PASSWORD) {
+
+    sessionStorage.setItem("gp_owner_session", "active");
+
+    $("cover").classList.add("hidden");
+    $("login").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+
+    logActivity("Owner logged into dashboard");
+    updateDashboard();
+  } else {
+    $("loginError").textContent = "Invalid owner ID or password.";
+  }
+}
+
+function logout() {
+  logActivity("Owner logged out");
+  sessionStorage.removeItem("gp_owner_session");
+  $("ownerID").value = "";
+  $("ownerPassword").value = "";
+  showCover();
+}
+
+function showDashboardSection(section) {
+  ["overview","links","history"].forEach(id => {
+    $(id).classList.toggle("hidden", id !== section);
+  });
+  if (section === "history") renderHistory();
+  if (section === "links") renderLinks();
+}
+
+function updateDashboard() {
+  const now = new Date();
+  $("clock").textContent = now.toLocaleTimeString();
+  $("today").textContent = now.toLocaleDateString(
+    undefined,
+    {day:"numeric",month:"short",year:"numeric"}
+  );
+  $("linkCount").textContent = getLinks().length;
+}
+
+setInterval(updateDashboard,1000);
+
+// ====================================
+// ACTIVITY HISTORY
+// ====================================
+
+function getHistory() {
+  return JSON.parse(localStorage.getItem("gp_history") || "[]");
+}
+
+function logActivity(message) {
+  const history = getHistory();
+  history.unshift({
+    message,
+    date:new Date().toLocaleString()
+  });
+  localStorage.setItem("gp_history",
+    JSON.stringify(history.slice(0,200)));
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = getHistory();
+  $("historyList").innerHTML = history.length
+    ? history.map(item => `
+      <div class="entry">
+        ${escapeHtml(item.message)}
+        <small>${escapeHtml(item.date)}</small>
+      </div>`).join("")
+    : '<p class="empty">No activity recorded yet.</p>';
+}
+
+function clearHistory() {
+  if (confirm("Clear all activity history?")) {
+    localStorage.removeItem("gp_history");
+    renderHistory();
+  }
+}
+
+// ====================================
+// LINK MANAGEMENT
+// ====================================
+
+function getLinks() {
+  return JSON.parse(localStorage.getItem("gp_links") || "[]");
+}
+
+function saveLinks(links) {
+  localStorage.setItem("gp_links",JSON.stringify(links));
+  $("linkCount").textContent = links.length;
+  renderLinks();
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[c]);
+}
+
+function normalizeUrl(value) {
+  let url = value.trim();
+  if (!/^https?:\/\//i.test(url)) {
+    url = "https://" + url;
+  }
+  const parsed = new URL(url);
+  if (!["http:","https:"].includes(parsed.protocol)) {
+    throw new Error("Only HTTP and HTTPS links are allowed.");
+  }
+  return parsed.href;
+}
+
+function saveLink(type,inputID) {
+  const value = $(inputID).value.trim();
+  if (!value) return alert("Enter a link first.");
+
+  try {
+    const url = normalizeUrl(value);
+    const links = getLinks();
+
+    links.unshift({
+      id:Date.now(),
+      type,
+      value:url,
+      date:new Date().toLocaleString()
+    });
+
+    saveLinks(links);
+    logActivity("Saved a " + type + " link");
+    $(inputID).value = "";
+  } catch(error) {
+    alert("Invalid website address: " + error.message);
+  }
+}
+
+function saveHtml() {
+  const code = $("htmlCode").value.trim();
+  if (!code) return alert("Paste HTML code first.");
+
+  const links = getLinks();
+  links.unshift({
+    id:Date.now(),
+    type:"HTML",
+    value:code,
+    date:new Date().toLocaleString()
+  });
+
+  saveLinks(links);
+  logActivity("Saved HTML code");
+  $("htmlCode").value = "";
+}
+
+function previewHtml() {
+  $("htmlPreview").srcdoc =
+    $("htmlCode").value;
+}
+
+function renderLinks() {
+  const links = getLinks();
+
+  $("savedLinks").innerHTML = links.length
+    ? links.map(item => `
+      <div class="entry">
+        <b>${escapeHtml(item.type)}</b>
+        <small>${escapeHtml(item.date)}</small>
+        <div style="overflow-wrap:anywhere;margin-top:8px">
+          ${item.type === "HTML"
+            ? escapeHtml(item.value).slice(0,250)
+            : `<a href="${escapeHtml(item.value)}"
+                 target="_blank" rel="noopener noreferrer">
+                 ${escapeHtml(item.value)}
+               </a>`}
+        </div>
+        <button class="secondary"
+          onclick="copyResource(${item.id})">COPY</button>
+        <button class="secondary"
+          onclick="deleteResource(${item.id})">DELETE</button>
+      </div>`).join("")
+    : '<p class="empty">No saved resources yet.</p>';
+}
+
+function copyResource(id) {
+  const item = getLinks().find(x => x.id === id);
+  if (!item) return;
+  navigator.clipboard.writeText(item.value)
+    .then(() => alert("Copied successfully."))
+    .catch(() => alert("Copy unavailable in this browser."));
+}
+
+function deleteResource(id) {
+  if (!confirm("Delete this saved resource?")) return;
+  saveLinks(getLinks().filter(x => x.id !== id));
+  logActivity("Deleted a saved resource");
+}
+
+// ====================================
+// INITIALIZATION
+// ====================================
+
+updateDashboard();
+
+if (sessionStorage.getItem("gp_owner_session") === "active") {
+  $("cover").classList.add("hidden");
+  $("login").classList.add("hidden");
+  $("dashboard").classList.remove("hidden");
+  renderLinks();
+  updateDashboard();
+} else {
+  showCover();
+}
+
+renderHistory();
+</script>
+
+</body>
+..,....................>
+<
+<style>
+body {
+  background:#07182c;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+  padding:30px 15px;
+}
+h1 {color:#e5b84c}
+.container {
+  max-width:600px;
+  margin:40px auto;
+}
+a {
+  display:block;
+  background:#142e48;
+  border:1px solid #e5b84c;
+  padding:22px;
+  margin:18px 0;
+  border-radius:10px;
+  color:#fff;
+  text-decoration:none;
+  font-size:18px;
+}
+a:hover {
+  background:#254765;
+}
+small {color:#a9bbcf}
+</style>
+</head>
+<body>
+
+<h1>GLOBAL PILGRIM</h1>
+<h2>CENTRAL CONTROL PORTAL</h2>
+<p>Select the platform you want to open.</p>
+
+<div class="container">
+
+<a href="./TRADE/index.html">
+GLOBAL PILGRIM TRADE PLATFORM
+<br><small>Open Trading Dashboard</small>
+</a>
+
+<a href="./BANKING/index.html">
+GLOBAL PILGRIM BANK
+<br><small>Open Banking Dashboard</small>
+</a>
+
+<a href="./MINPO/index.html">
+MINPO PGC BLOCKCHAIN
+<br><small>Open Mining Dashboard</small>
+</a>
+
+</div>
+
+<footer>
+ADEGAN GLOBAL ENTERPRISE
+</footer>
+
+</body>
+</html>
